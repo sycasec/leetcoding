@@ -1,40 +1,25 @@
-use std::collections::HashMap;
-/*  Contiguous Array
+/*
     https://leetcode.com/problems/contiguous-array/
     Given bin array `nums`, ret maxlen of contiguous subarray with equal amount of `0` and `1`.
-    runtime 14ms
-*/
-
-/* Technique
-* init count to 0 with corresponding value in map
-* loop through nums, everytime we see 0: count += -1
-*                    everytime we see 1: count += 1
-* check map if we have current value of count
-*              we do  ? -> update max_len
-*              we dont? -> insert count, index into map
-* finish loop through nums, return max_len
 */
 
 fn find_max_length(nums: Vec<i32>) -> i32 {
-    let mut map: HashMap<i32, i32> = HashMap::new();
-    let mut count = 0;
-    let mut max_len = 0;
-    map.insert(0, -1);
+    let mut curr_sum: i32 = 0;
+    let mut max_len: i32 = 0;
+    let mut seen = std::collections::HashMap::new();
 
-    for (i, &num) in nums.iter().enumerate() {
-        count += if num == 1 { 1 } else { -1 };
-
-        if let Some(prev_index) = map.get(&count) {
-            max_len = max_len.max(i as i32 - prev_index);
+    for (i, n) in nums.iter().enumerate() {
+        curr_sum += if n == &0 { -1 } else { 1 };
+        if let Some(val) = seen.get(&curr_sum) {
+            max_len = max_len.max((i - *f) as i32);
         } else {
-            map.insert(count, i as i32);
+            seen.insert(curr_sum, i);
+        }
+
+        if curr_sum == 0 {
+            max_len = max_len.max((i + 1) as i32);
         }
     }
-    max_len
-}
 
-fn main() {
-    let tc = vec![0, 0, 1, 0, 0, 0, 1, 1];
-    let ans = find_max_length(tc);
-    println!("{ans}");
+    max_len
 }
